@@ -27,8 +27,10 @@ gulp.task("html", function(){
 // CSS
 
 gulp.task("css", function(){
-	gulp.src("app/stylus/*.styl")
-	.pipe(stylus())
+	gulp.src("app/stylus/main.styl")
+	.pipe(stylus({
+		"include css": true
+	}))
 	.pipe(autoprefixer({
 		browsers: ["> 5%"],
 		cascade: false

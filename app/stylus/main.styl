@@ -1,4 +1,85 @@
+// IMPORT
+
+@import "variables.styl"
+
+
+// BASE STYLES
+
 *
 	margin 0
 	padding 0
 	box-sizing border-box
+
+html, body
+	height 100%
+
+body
+	-webkit-font-smoothing antialiased
+
+
+// STYLES
+
+.container
+	display block
+	width 90%
+	height 100%
+	margin 0 auto
+
+.form-description
+	margin 30px 0
+	text-align center
+	font-size 2em
+
+.form
+	display block
+	position relative
+	width 100%
+	max-width 600px
+	margin 0 auto
+	color font-color
+	.error-wrap,
+	.field-wrap,
+	.submit-wrap,
+	.form-input
+		width 100%
+	.field-wrap
+		margin-top 5px
+		textarea
+			font-size 1.5em
+	.form-input
+		padding 16px 16px 16px 54px
+		border 1px solid border-normal-color
+		border-radius 3px
+		font-size 1.1em
+	.error-wrap
+		background-color orange
+		text-align center
+		padding 16px
+		margin-bottom 10px
+		color white
+	.form-message
+		height 150px
+		resize none
+		margin-bottom 70px
+	.submit-wrap
+		position relative
+		input
+			display block
+			position absolute
+			bottom 0
+			right 0
+			padding 15px 60px
+	.form-label
+		position relative
+		left 57px
+		bottom -39px
+		font-size 1.1em
+	.form-label-small
+		position relative
+		left 0
+		bottom 1px
+		font-size 0.9em
+	.error
+		border 1px solid border-error-color
+	.valid
+		border 1px solid border-valid-color
