@@ -61,10 +61,10 @@ gulp.task("js", function(){
 
 // JS Linting
 
-gulp.task("lint", function(){
-	gulp.src("app/js/*.js")
+gulp.task('lint', function(){
+	gulp.src('app/js/*.js')
 	.pipe(jshint())
-	.pipe(jshint.reporter("jshint-stylish"))
+	.pipe(jshint.reporter('jshint-stylish'))
 });
 
 // Watch

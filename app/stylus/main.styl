@@ -2,6 +2,10 @@
 
 @import "variables.styl"
 
+// fonts
+
+form-helpers = 0.9em
+main-form = 1.1em
 
 // BASE STYLES
 
@@ -43,6 +47,7 @@ body
 	.form-input
 		width 100%
 	.field-wrap
+		position relative
 		margin-top 5px
 		textarea
 			font-size 1.5em
@@ -50,7 +55,7 @@ body
 		padding 16px 16px 16px 54px
 		border 1px solid border-normal-color
 		border-radius 3px
-		font-size 1.1em
+		font-size main-form
 	.error-wrap
 		background-color orange
 		text-align center
@@ -69,17 +74,24 @@ body
 			bottom 0
 			right 0
 			padding 15px 60px
+	.error-msg
+		position absolute
+		top 0
+		right 0
+		font-size form-helpers
+		color orange
 	.form-label
 		position relative
 		left 57px
 		bottom -39px
-		font-size 1.1em
+		font-size main-form
 	.form-label-small
 		position relative
 		left 0
 		bottom 1px
-		font-size 0.9em
+		font-size form-helpers
 	.error
+		outline none
 		border 1px solid border-error-color
 	.valid
 		border 1px solid border-valid-color
