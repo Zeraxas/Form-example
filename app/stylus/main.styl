@@ -37,6 +37,15 @@ body
 	max-width 600px
 	margin 0 auto
 	color font-color
+	input[type="text"],
+	input[type="mail"],
+	textarea
+		background-color white
+	// special styles for disable yellow background-color added by webkit autofill
+	input:-webkit-autofill
+		background-color white !important
+		box-shadow: 0 0 0px 1000px white inset !important
+	// owerwrite default focus effect (blue outline)
 	input[type="text"]:focus,
 	input[type="email"]:focus,
 	textarea:focus
@@ -59,23 +68,46 @@ body
 		box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.08)
 		border-radius 3px
 		font-size main-form
-	.user,
-	.company
-		background-size 24px 24px
-	.user
-		background url(../../img/svg/user.svg) 16px 50% no-repeat,
-					url(../../img/svg/required.svg) 100% 0px no-repeat
-		background-size 24px 24px, 20px 20px
-	.company
-		background url(../../img/svg/company.svg) 16px 50% no-repeat
-		background-size 24px 24px
-	.email
-		background url(../../img/svg/email.svg) 16px 50% no-repeat,
-					url(../../img/svg/required.svg) 100% 0px no-repeat
-		background-size 24px 24px, 20px 20px
-	.skype
-		background url(../../img/svg/skype.svg) 16px 50% no-repeat
-		background-size 24px 24px
+	// we have to use special elements in html (i) for icons, instead of
+	// backgrounds images coz webkit autofill adds yellow image in base 64
+	// to every filled input and that image owerwrite icons
+	.name-icon,
+	.email-icon,
+	.company-icon,
+	.skype-icon,
+	.write-icon
+		display block
+		position absolute
+		width 24px
+		height 24px
+		top 16px
+		left 17px
+		z-index 1000
+	.name-icon
+		background url(../../img/svg/user.svg) 50% 50% no-repeat
+		background-size cover
+	.email-icon
+		background url(../../img/svg/email.svg) 50% 50% no-repeat
+		background-size cover
+	.company-icon
+		background url(../../img/svg/company.svg) 50% 50% no-repeat
+		background-size cover
+	.skype-icon
+		background url(../../img/svg/skype.svg) 50% 50% no-repeat
+		background-size cover
+	.write-icon
+		background url(../../img/svg/write.svg) 50% 50% no-repeat
+		background-size cover
+	.required
+		display block
+		position absolute
+		width 4px
+		height 4px
+		top 12px
+		right 17px
+		border-radius 50%
+		background-color orange
+		z-index 1000
 	.error-wrap
 		background-color orange
 		text-align center
@@ -86,9 +118,6 @@ body
 		height 150px
 		resize none
 		margin-bottom 70px
-		background url(../../img/svg/write.svg) 16px 15px no-repeat,
-					url(../../img/svg/required.svg) 100% 0px no-repeat
-		background-size 24px 24px, 20px 20px
 	.submit-wrap
 		position relative
 		input
@@ -118,6 +147,8 @@ body
 		font-size form-helpers
 		z-index 10
 	.error
+		// import using for owerwrite blue border that
+		// used as replacement for default outline for focus
 		border 1px solid border-error-color !important
 		box-shadow none !important
 	.valid
