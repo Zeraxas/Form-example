@@ -2,10 +2,6 @@
 
 @import "variables.styl"
 
-// fonts
-
-form-helpers = 0.9em
-main-form = 1.1em
 
 // BASE STYLES
 
@@ -41,6 +37,12 @@ body
 	max-width 600px
 	margin 0 auto
 	color font-color
+	input[type="text"]:focus,
+	input[type="email"]:focus,
+	textarea:focus
+		border-color border-focus-color
+		box-shadow 0 0 5px rgba(44, 151, 222, 0.2)
+		outline none
 	.error-wrap,
 	.field-wrap,
 	.submit-wrap,
@@ -48,12 +50,13 @@ body
 		width 100%
 	.field-wrap
 		position relative
-		margin-top 5px
+		margin 28px 0
 		textarea
 			font-size 1.5em
 	.form-input
 		padding 16px 16px 16px 54px
 		border 1px solid border-normal-color
+		box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.08)
 		border-radius 3px
 		font-size main-form
 	.error-wrap
@@ -76,23 +79,25 @@ body
 			padding 15px 60px
 	.error-msg
 		position absolute
-		top 0
+		top -19px
 		right 0
 		font-size form-helpers
 		color orange
 	.form-label
-		position relative
+		position absolute
 		left 57px
-		bottom -39px
+		top 19px
+		transition left .2s, top .2s
 		font-size main-form
+		z-index 10
 	.form-label-small
-		position relative
+		position absolute
 		left 0
-		bottom 1px
+		top -19px
+		transition left .2s, top .2s
 		font-size form-helpers
+		z-index 10
 	.error
-		outline none
-		border 1px solid border-error-color
+		border 1px solid border-error-color !important
 	.valid
-		outline none
-		border 1px solid border-valid-color
+		border 1px solid border-valid-color !important

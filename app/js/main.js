@@ -19,6 +19,7 @@
 		},
 		bindEvents: function() {
 			this.$form.addEventListener("blur", this.validation.validate.bind(this), true );
+			this.$form.addEventListener("input", this.animation.moveLable.bind(this.animation), true);
 		},
 		validation: {
 			ruleRegx: {
@@ -187,7 +188,22 @@
 			}
 		},
 		animation: {
+			moveLable: function(e) {
+				var el = e.target,
+					elem = this.getClosestLabel(el);
 
+				if ( el.value !== "" ) {
+					elem.classList.add("form-label-small");
+				} else {
+					elem.classList.remove("form-label-small");
+				}
+			},
+			getClosestLabel: function(el) {
+				var p = el.parentElement,
+					elem = p.querySelector(".form-label");
+
+				return elem;
+			}
 		}
 	};
 
