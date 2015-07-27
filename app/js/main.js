@@ -19,7 +19,15 @@
 		},
 		bindEvents: function() {
 			this.$form.addEventListener("blur", this.validation.validate.bind(this), true );
-			this.$form.addEventListener("input", this.animation.moveLable.bind(this.animation), true);
+			this.$form.addEventListener("input", this.inputHandler.bind(this), true);
+		},
+		inputHandler: function(e) {
+			// control label animation
+			this.animation.moveLable(e);
+			// show length of message in textarea
+			this.letterCounter.isTextarea(e);
+			// remove error class for fields when input starts
+			this.errorControl.removeError(e);
 		},
 		validation: {
 			ruleRegx: {
@@ -168,6 +176,15 @@
 				el.classList.remove("error");
 				el.classList.remove("valid");
 			},
+			removeError: function(e) {
+				var el = e.target,
+					elem = this.getErrorElem(el);
+
+				if ( elem === null ) { return; }
+
+				el.classList.remove("error");
+				el.parentElement.removeChild(elem);
+			},
 			getErrorElem: function(el) {
 				var p = el.parentElement,
 					elem = p.querySelector(".error-msg");
@@ -203,6 +220,76 @@
 					elem = p.querySelector(".form-label");
 
 				return elem;
+			}
+		},
+		letterCounter: {
+			maxLength: 0,
+			cls: "msg-length",
+			msgElem: null,
+			pr: null,
+			state: true,
+			init: function(el) {
+				this.pr = el.parentElement;
+				this.maxLength = el.getAttribute("maxlength");
+			},
+			isTextarea: function(e) {
+				var el = e.target;
+
+				if ( el.tagName === "TEXTAREA" ) {
+					if ( this.state ) {
+						this.init(el);
+						this.state = false;
+					}
+					this.getMsgLength(el, e);
+				}
+			},
+			getMsgLength: function(el, e) {
+				var val = el.value,
+					l = val.length,
+					str = l + "/" + this.maxLength,
+					state = this.isExist();
+
+				if ( state && val === "" ) {
+					this.removeMsgLength(el);
+
+					return;
+
+				} else if ( l <= this.maxLength ) {
+					this.showMsgLength(el, str, state);
+				}
+			},
+			showMsgLength: function(el, str, state) {
+				var elem;
+
+				if ( state ) {
+					this.changeMsgLength(str);
+				} else {
+					this.createMsgLength(str);
+
+					this.pr.appendChild(this.msgElem);
+				}
+
+			},
+			createMsgLength: function(str) {
+				var elem = document.createElement("p");
+
+				elem.innerHTML = str;
+				elem.className = this.cls;
+
+				this.msgElem = elem;
+			},
+			changeMsgLength: function(str) {
+				this.msgElem.innerHTML = str;
+			},
+			isExist: function() {
+				var state = ( this.msgElem !== null ) ? true : false;
+
+				return state;
+			},
+			removeMsgLength: function(el) {
+				this.pr.removeChild(this.msgElem);
+
+				this.msgElem = null;
 			}
 		}
 	};
