@@ -20,6 +20,7 @@
 		bindEvents: function() {
 			this.$form.addEventListener("blur", this.validation.validate.bind(this), true );
 			this.$form.addEventListener("input", this.inputHandler.bind(this), true);
+			this.$form.addEventListener("focus", this.focusHandler.bind(this), true);
 		},
 		inputHandler: function(e) {
 			// control label animation
@@ -28,6 +29,12 @@
 			this.letterCounter.isTextarea(e);
 			// remove error class for fields when input starts
 			this.errorControl.removeError(e);
+			// textarea-auto expand control
+			this.autoExpand.isTextarea(e);
+		},
+		focusHandler: function(e) {
+			// get base scroll height for textarea auto-expand
+			this.autoExpand.isTextarea(e);
 		},
 		validation: {
 			ruleRegx: {
@@ -290,6 +297,49 @@
 				this.pr.removeChild(this.msgElem);
 
 				this.msgElem = null;
+			}
+		},
+		autoExpand: {
+			baseScrollHeight: 0,
+			state: true,
+			isTextarea: function(e) {
+				var el = e.target;
+
+				if ( el.tagName === "TEXTAREA" ) {
+					if ( e.type === "focus" ) {
+						if ( this.state ) {
+							this.getBaseScrollHeight(el);
+							this.state = false;
+						}
+					} else if ( e.type === "input" ) {
+						this.setNewHeight(el);
+					}
+				}
+			},
+			getBaseScrollHeight: function(el) {
+				// we get base scroll height just once
+				var val = el.value;
+				el.value = "";
+
+				this.baseScrollHeight = el.scrollHeight;
+
+				el.value = val;
+			},
+			setNewHeight: function(el) {
+				// in data-nin-row we set the same amout of rows like in rows attribute
+				// but data one is unchangeble
+				var baseRows = +el.getAttribute("data-min-rows"),
+					rows;
+
+				// every time we set base height; that's why,
+				// if some text have been deleted, we'll see
+				// that scroll height decreased; because of that
+				// amount as rows will decrease as well
+				el.setAttribute("rows", baseRows);
+
+				rows = +Math.ceil( (el.scrollHeight - this.baseScrollHeight) / 24 );
+
+				el.setAttribute("rows", rows + baseRows);
 			}
 		}
 	};
