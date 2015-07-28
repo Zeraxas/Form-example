@@ -229,26 +229,29 @@
 				return elem;
 			}
 		},
+		// symbol counter for textarea
 		letterCounter: {
 			maxLength: 0,
 			cls: "msg-length",
 			msgElem: null,
 			pr: null,
 			state: true,
-			init: function(el) {
-				this.pr = el.parentElement;
-				this.maxLength = el.getAttribute("maxlength");
-			},
 			isTextarea: function(e) {
 				var el = e.target;
 
-				if ( el.tagName === "TEXTAREA" ) {
-					if ( this.state ) {
-						this.init(el);
-						this.state = false;
-					}
-					this.getMsgLength(el, e);
+				if ( el.tagName !== "TEXTAREA" ) { return; }
+
+				if ( this.state ) {
+					this.init(el);
 				}
+
+				this.getMsgLength(el, e);
+
+			},
+			init: function(el) {
+				this.pr = el.parentElement;
+				this.maxLength = el.getAttribute("maxlength");
+				this.state = false;
 			},
 			getMsgLength: function(el, e) {
 				var val = el.value,
@@ -299,47 +302,51 @@
 				this.msgElem = null;
 			}
 		},
+		// textarea auto-exapnd
 		autoExpand: {
 			baseScrollHeight: 0,
+			baseRows: 0,
 			state: true,
 			isTextarea: function(e) {
 				var el = e.target;
 
-				if ( el.tagName === "TEXTAREA" ) {
-					if ( e.type === "focus" ) {
-						if ( this.state ) {
-							this.getBaseScrollHeight(el);
-							this.state = false;
-						}
-					} else if ( e.type === "input" ) {
-						this.setNewHeight(el);
-					}
+				if ( el.tagName !== "TEXTAREA" ) { return; }
+
+				if ( e.type === "focus" ) {
+					if ( !this.state ) { return; }
+
+					this.init(el);
+
+				} else if ( e.type === "input" ) {
+					this.setNewHeight(el);
 				}
+			},
+			init: function(el) {
+				this.getBaseScrollHeight(el);
+				this.getBaseRows(el);
+				this.state = false;
 			},
 			getBaseScrollHeight: function(el) {
 				// we get base scroll height just once
-				var val = el.value;
-				el.value = "";
-
 				this.baseScrollHeight = el.scrollHeight;
-
-				el.value = val;
 			},
-			setNewHeight: function(el) {
+			getBaseRows: function(el) {
 				// in data-nin-row we set the same amout of rows like in rows attribute
 				// but data one is unchangeble
-				var baseRows = +el.getAttribute("data-min-rows"),
-					rows;
+				this.baseRows = +el.getAttribute("data-min-rows");
+			},
+			setNewHeight: function(el) {
+				var rows;
 
 				// every time we set base height; that's why,
 				// if some text have been deleted, we'll see
 				// that scroll height decreased; because of that
 				// amount as rows will decrease as well
-				el.setAttribute("rows", baseRows);
+				el.setAttribute("rows", this.baseRows);
 
-				rows = +Math.ceil( (el.scrollHeight - this.baseScrollHeight) / 24 );
+				rows = +Math.ceil( (el.scrollHeight - this.baseScrollHeight) / 25 );
 
-				el.setAttribute("rows", rows + baseRows);
+				el.setAttribute("rows", rows + this.baseRows);
 			}
 		}
 	};
