@@ -11,13 +11,10 @@
     "gulp-rename": "^1.2.2",
     "gulp-stylus": "^2.0.5",
     "gulp-svg-icons": "^0.6.1",
-    "gulp-svg-sprite": "^1.2.6",
     "gulp-svgmin": "^1.2.0",
     "gulp-svgstore": "^5.0.3",
     "gulp-uglify": "^1.2.0",
     "imagemin-pngquant": "^4.1.2",
-    "imagemin-svgo": "^4.1.2",
-    "jshint-stylish": "^2.0.1",
-    "path": "^0.11.14"
+    "jshint-stylish": "^2.0.1"
   }
 }
