@@ -1,5 +1,4 @@
 (function(){
-
 	"use strict";
 
 	var formControl = {
@@ -18,9 +17,16 @@
 			this.$send = this.$form.send;
 		},
 		bindEvents: function() {
-			this.$form.addEventListener("blur", this.validation.validate.bind(this), true );
+			this.$form.addEventListener("blur", this.blurHandler.bind(this), true );
 			this.$form.addEventListener("input", this.inputHandler.bind(this), true);
 			this.$form.addEventListener("focus", this.focusHandler.bind(this), true);
+			this.$form.addEventListener("submit", this.submitValidation.submtValidate.bind(this));
+		},
+		blurHandler: function(e) {
+			// start validation
+			var func = this.validation.validate.bind(this); func(e);
+			// check, if textarea full of spacebars
+			this.letterCounter.isFullOfSpaces(e);
 		},
 		inputHandler: function(e) {
 			// control label animation
@@ -37,6 +43,14 @@
 			this.autoExpand.isTextarea(e);
 		},
 		validation: {
+			states: {
+				name: false,
+				company: true,
+				email: false,
+				"email-confirm": false,
+				skype: true,
+				message: false
+			},
 			ruleRegx: {
 				emailRule: /[a-z0-9!#$%&/'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
 			},
@@ -57,7 +71,7 @@
 					}
 
 				} else if ( el === this.$emailConf ) {
-					this.validation.confirmEmail(el);
+					this.validation.confirmEmail(el, this.$email);
 				}
 			},
 			validateText: function(el) {
@@ -65,10 +79,12 @@
 
 				if ( !emptyness ) {
 					formControl.errorControl.showError(el, "empty");
+					this.setState(el, false);
 					return;
 				}
 
 				formControl.validControl.showValid(el);
+				this.setState(el, true);
 			},
 			validateEmail: function(el) {
 				var emptyness = this.checkEmpty(el),
@@ -76,42 +92,51 @@
 
 				if ( !emptyness ) {
 					formControl.errorControl.showError(el, "empty");
+					this.setState(el, false);
 					return;
 				} else if ( !valid ) {
 					formControl.errorControl.showError(el, "mail-error");
+					this.setState(el, false);
 					return;
 				}
 
 				formControl.validControl.showValid(el);
+				this.setState(el, true);
 			},
-			confirmEmail: function(el) {
+			confirmEmail: function(el, email) {
 				var emptyness = this.checkEmpty(el),
-					confirm  = this.matchFields(formControl.$email, formControl.$emailConf);
+					confirm  = this.matchFields(email, el);
+
+				if ( !this.checkEmpty(email) ) {
+					formControl.errorControl.showError(el, "mail-empty");
+					this.setState(el, false);
+					return;
+				}
+
+				if ( formControl.validation.states.email === false ) {
+					formControl.errorControl.showError(el, "mail-incorrect");
+					this.setState(el, false);
+					return;
+				}
 
 				if ( !emptyness ) {
 					formControl.errorControl.showError(el, "empty");
+					this.setState(el, false);
 					return;
 				} else if ( !confirm ) {
 					formControl.errorControl.showError(el, "emails-not-match");
+					this.setState(el, false);
 					return;
 				}
 
 				formControl.validControl.showValid(el);
+				this.setState(el, true);
 			},
 			matchFields: function(el1, el2) {
-				var v1 = el1.value,
-					v2 = el2.value;
-
-				if ( v1 === v2 ) {
-					return true;
-				} else {
-					return false;
-				}
+				return ( el1.value === el2.value ) ? true : false;
 			},
 			checkEmpty: function(el) {
-				var s = ( el.value !== "" ) ? true : false;
-
-				return s;
+				return ( +el.value === 0 ) ? false : true;
 			},
 			checkEmailByRegex: function(el) {
 				var email = el.value,
@@ -124,14 +149,20 @@
 				} else {
 					return true;
 				}
+			},
+			setState: function(el, state) {
+				var id = el.id;
+				this.states[id] = state;
 			}
 
 		},
 		errorControl: {
 			errors: {
 				empty: "This field have to be filled",
-				"mail-error": "Problems with email",
-				"emails-not-match": "Emails not match to each other"
+				"mail-error": "Email is written incorrectly",
+				"mail-empty": "Previous email filed is empty",
+				"mail-incorrect": "Previous email is incorrectly written",
+				"emails-not-match": "Emails aren't match to each other"
 			},
 			showError: function(el, type) {
 				var st = this.isErAlreadyExist(el,type),
@@ -229,6 +260,57 @@
 				return elem;
 			}
 		},
+		// validation on submit
+		submitValidation: {
+			submtValidate: function(e) {
+
+				this.submitValidation.valName(this.$name);
+				this.submitValidation.valCompany(this.$company);
+				this.submitValidation.valEmail(this.$email);
+				this.submitValidation.confEmail(this.$emailConf, this.$email);
+				this.submitValidation.valSkype(this.$skype);
+				this.submitValidation.valMsg(this.$msg);
+
+				this.submitValidation.isValid(e);
+			},
+			valName: function(el) {
+				formControl.validation.validateText(el);
+			},
+			valCompany: function(el) {
+				if ( el.value !== "" ) {
+					formControl.validation.validateText(el);
+				}
+			},
+			valEmail: function(el) {
+				formControl.validation.validateEmail(el);
+			},
+			confEmail: function(el1, el2) {
+				formControl.validation.confirmEmail(el1, el2);
+			},
+			valSkype: function(el) {
+				if ( el.value !== "" ) {
+					formControl.validation.validateText(el);
+				}
+			},
+			valMsg: function(el) {
+				formControl.validation.validateText(el);
+			},
+			isValid: function(e) {
+				var obj = formControl.validation.states,
+					key;
+
+				for ( key in obj ) {
+					if ( obj[key] === false ) {
+						e.preventDefault();
+						this.focusInvalidElem(key);
+						return;
+					}
+				}
+			},
+			focusInvalidElem: function(id) {
+				document.querySelector("#" + id).focus();
+			}
+		},
 		// symbol counter for textarea
 		letterCounter: {
 			maxLength: 0,
@@ -259,8 +341,10 @@
 					str = l + "/" + this.maxLength,
 					state = this.isExist();
 
+
+
 				if ( state && val === "" ) {
-					this.removeMsgLength(el);
+					this.removeMsgLength();
 
 					return;
 
@@ -296,10 +380,19 @@
 
 				return state;
 			},
-			removeMsgLength: function(el) {
+			removeMsgLength: function() {
 				this.pr.removeChild(this.msgElem);
 
 				this.msgElem = null;
+			},
+			isFullOfSpaces: function(e) {
+				var el = e.target;
+
+				if ( el.tagName === "TEXTAREA" && +el.value === 0 ) {
+					if (this.isExist()) {
+						this.removeMsgLength();
+					}
+				}
 			}
 		},
 		// textarea auto-exapnd

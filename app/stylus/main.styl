@@ -86,7 +86,6 @@ textarea
 		box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.08)
 		border-radius 3px
 		font-size input-font-size
-
 	// we have to use special elements in html for icons, instead of
 	// backgrounds images coz webkit autofill adds yellow image in base 64
 	// to every filled input and that image owerwrite icons
@@ -127,12 +126,14 @@ textarea
 		top 16px
 		transition left .2s, top .2s
 		font-size label-font-size
+		color labels-color
 		z-index 10
 	.form-label-small
 		position absolute
 		left 0
 		top -17px
 		transition left .2s, top .2s
+		color labels-color
 		z-index 10
 	.error-msg,
 	.form-label-small,
