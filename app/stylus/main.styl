@@ -9,12 +9,20 @@
 	margin 0
 	padding 0
 	box-sizing border-box
+html
+	font-size base-font-size
 
 html, body
 	height 100%
 
 body
 	-webkit-font-smoothing antialiased
+
+body,
+textarea
+	font-family "Open Sans", "sans-serif"
+	font-size 1.6rem
+	color font-color
 
 
 // STYLES
@@ -28,7 +36,6 @@ body
 .form-description
 	margin 30px 0
 	text-align center
-	font-size 2em
 
 .form
 	display block
@@ -36,7 +43,6 @@ body
 	width 100%
 	max-width 600px
 	margin 0 auto
-	color font-color
 	input[type="text"],
 	input[type="mail"],
 	textarea
@@ -60,14 +66,27 @@ body
 	.field-wrap
 		position relative
 		margin 28px 0
-		textarea
-			font-size 1.5em
+		&:nth-of-type(1):after,
+		&:nth-of-type(3):after,
+		&:nth-of-type(4):after,
+		&:nth-of-type(6):after
+			display block
+			content ""
+			position absolute
+			top 12px
+			right 17px
+			width 4px
+			height 4px
+			border-radius 50%
+			background-color orange
+			z-index 1000
 	.form-input
 		padding 16px 16px 16px 54px
 		border 1px solid border-normal-color
 		box-shadow inset 0 1px 1px rgba(0, 0, 0, 0.08)
 		border-radius 3px
-		font-size main-form
+		font-size input-font-size
+
 	// we have to use special elements in html for icons, instead of
 	// backgrounds images coz webkit autofill adds yellow image in base 64
 	// to every filled input and that image owerwrite icons
@@ -76,20 +95,15 @@ body
 		position absolute
 		width 24px
 		height 24px
-		top 16px
+		top 0
+		bottom 0
+		margin auto 0
 		left 17px
 		fill: icons-color;
 		z-index 1000
-	.required
-		display block
-		position absolute
-		width 4px
-		height 4px
-		top 12px
-		right 17px
-		border-radius 50%
-		background-color orange
-		z-index 1000
+	.icon.write
+		top 16px
+		margin 0
 	.error-wrap
 		background-color orange
 		text-align center
@@ -107,26 +121,28 @@ body
 			bottom 0
 			right 0
 			padding 15px 60px
-	.error-msg
-		position absolute
-		top -19px
-		right 0
-		font-size form-helpers
-		color orange
 	.form-label
 		position absolute
 		left 57px
-		top 19px
+		top 16px
 		transition left .2s, top .2s
-		font-size main-form
+		font-size label-font-size
 		z-index 10
 	.form-label-small
 		position absolute
 		left 0
-		top -19px
+		top -17px
 		transition left .2s, top .2s
-		font-size form-helpers
 		z-index 10
+	.error-msg,
+	.form-label-small,
+	.msg-length
+		font-size label-small-font-size
+	.error-msg
+		position absolute
+		top -17px
+		right 0
+		color orange
 	.error
 		// import using for owerwrite blue border that
 		// used as replacement for default outline for focus
@@ -138,6 +154,5 @@ body
 	// styles for message-length elements
 	.msg-length
 		position absolute
-		top -19px
+		top -17px
 		right 0
-		font-size form-helpers
