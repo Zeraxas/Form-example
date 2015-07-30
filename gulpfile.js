@@ -12,10 +12,13 @@ var gulp = require("gulp"),
 	inject = require("gulp-inject"),
 	cheerio = require("gulp-cheerio"),
 	Icons = require("gulp-svg-icons"),
-	svgmin = require("gulp-svgmin");
+	svgmin = require("gulp-svgmin"),
+	htmlreplace = require("gulp-html-replace"),
+	htmlmin = require("gulp-htmlmin");
 
 var paths = {
 	app: "app/",
+	dist: "dist/",
 	stylus: "app/stylus/",
 	js: "app/js/",
 	tmp: "app/tmp/",
@@ -133,6 +136,33 @@ gulp.task('replaceSvg', function() {
 	.pipe(gulp.dest(paths.app));
 });
 
+// Replace css and js links/src and minify html file
+
+gulp.task("copyhtml", function() {
+	gulp.src(paths.app + "index.html")
+	.pipe(htmlreplace({
+		"css": "css/main.min.css",
+		"js": "js/main.min.js"
+	}))
+	.pipe(htmlmin({
+		collapseWhitespace: true,
+		removeComments: true
+	}))
+	.pipe(gulp.dest(paths.dist))
+});
+
+// Copy minified versions of css and js files to dist
+
+gulp.task("copy", function() {
+	gulp.src(paths.tmpCss + "*.min.css")
+	.pipe(gulp.dest(paths.dist + "css/"))
+	gulp.src( paths.tmpJs + "*.min.js")
+	.pipe(gulp.dest(paths.dist + "js/"))
+});
+
+//  Build
+
+gulp.task("build", ["copyhtml", "copy"]);
 
 // Watch
 
