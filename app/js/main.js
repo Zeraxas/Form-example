@@ -242,15 +242,15 @@
 			errors: {
 				empty: "This field have to be filled",
 				"name-short": "Name is too short. At least 3 symbols",
-				"name-regex": "Name isn't valid (a-zA-Z0-9_-)",
-				"company-short": "Company name is too short. At least 3 symbols",
-				"company-regex": "Company name isn't valid (a-zA-Z0-9_- and space)",
-				"mail-regex": "Email is written incorrectly (@ and .domain)",
+				"name-regex": "Name isn't valid.",
+				"company-short": "Company name is too short. 3 symbols min",
+				"company-regex": "Company name isn't valid.",
+				"mail-regex": "Email is written incorrectly.",
 				"mail-empty": "Previous email filed is empty",
 				"mail-incorrect": "Previous email is incorrectly written",
 				"emails-not-match": "Emails aren't match to each other",
-				"skype-regex": "Skype-nickname isn't valid. (a-zA-Z0-9_-)",
-				"skype-short": "Skype-nikename is too short. At least 3 symbols"
+				"skype-regex": "Skype-nickname isn't valid.",
+				"skype-short": "Skype-nikename is too short. 3 symbols min"
 			},
 			showError: function(el, type) {
 				var st = this.isErAlreadyExist(el,type),

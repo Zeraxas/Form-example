@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 	<title>Form example</title>
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet'>
 	<!-- build:css -->
@@ -17,12 +18,12 @@
 		<form class="form" action="" id="order-form">
 			<div class="field-wrap">
 				<label class="form-label" for="name">Name</label>
-				<input class="form-input user" type="text" id="name">
+				<input class="form-input user" type="text" id="name" maxlength="30">
 				<svg class="icon user"><use xlink:href="#icon-user"></use></svg>
 			</div>
 			<div class="field-wrap">
 				<label class="form-label" for="company">Company</label>
-				<input class="form-input company" type="text" id="company">
+				<input class="form-input company" type="text" id="company"maxlength="30">
 				<svg class="icon company"><use xlink:href="#icon-company"></use></svg>
 			</div>
 			<div class="field-wrap">
@@ -37,7 +38,7 @@
 			</div>
 			<div class="field-wrap">
 				<label class="form-label" for="phone-number">Skype</label>
-				<input class="form-input skype" type="text" id="skype">
+				<input class="form-input skype" type="text" id="skype"maxlength="30">
 				<svg class="icon skype"><use xlink:href="#icon-skype"></use></svg>
 			</div>
 			<div class="field-wrap">
