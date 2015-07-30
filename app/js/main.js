@@ -52,85 +52,150 @@
 				message: false
 			},
 			ruleRegx: {
+				textRule: /^[a-zA-Z0-9_-]{3,30}$/,
+				companyRule: /^[a-zA-Z0-9_\s-]{3,30}$/,
 				emailRule: /[a-z0-9!#$%&/'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
 			},
 			validate: function(e) {
-				var el = e.target;
+				var el = e.target,
+					path = this.validation;
 
-				if ( el === this.$name || el === this.$msg ) {
-					this.validation.validateText(el);
-
-				} else if ( el === this.$email) {
-					this.validation.validateEmail(el);
-
-				} else if ( el === this.$company || el === this.$skype ) {
-					if ( el.value !== "" ) {
-						this.validation.validateText(el);
-					} else {
-						this.errorControl.removeErOrValid(el);
-					}
-
-				} else if ( el === this.$emailConf ) {
-					this.validation.confirmEmail(el, this.$email);
+				switch (el) {
+					case this.$name : path.validateName(el); break;
+					case this.$company : path.validateCompany(el); break;
+					case this.$email : path.validateEmail(el); break;
+					case this.$emailConf : path.confirmEmail(el, this.$email); break;
+					case this.$skype : path.validateSkype(el); break;
+					case this.$msg : path.validateMessage(el); break;
 				}
 			},
-			validateText: function(el) {
-				var emptyness = this.checkEmpty(el);
+			validateName: function(el) {
+				var emptyness = this.checkEmpty(el),
+					len = this.checkLength(el),
+					valid = this.checkTextByRegex(el);
 
 				if ( !emptyness ) {
-					formControl.errorControl.showError(el, "empty");
-					this.setState(el, false);
+					this.setError(el, "empty");
 					return;
 				}
 
-				formControl.validControl.showValid(el);
-				this.setState(el, true);
+				if ( !len ) {
+					this.setError(el, "name-short");
+					return;
+				}
+
+				if ( !valid ) {
+					this.setError(el, "name-regex");
+					return;
+				}
+
+				this.setValid(el);
+			},
+			validateCompany: function(el) {
+				if ( el.value !== "" ) {
+					this.startCompanyValidation(el);
+				} else {
+					formControl.errorControl.removeErOrValid(el);
+				}
+			},
+			startCompanyValidation: function(el) {
+				var emptyness = this.checkEmpty(el),
+					len = this.checkLength(el),
+					valid = this.checkCompanyByRegex(el);
+
+				if ( !emptyness ) {
+					this.setError(el, "empty");
+					return;
+				}
+
+				if ( !len ) {
+					this.setError(el, "company-short");
+					return;
+				}
+
+				if ( !valid ) {
+					this.setError(el, "company-regex");
+					return;
+				}
+
+				this.setValid(el);
 			},
 			validateEmail: function(el) {
 				var emptyness = this.checkEmpty(el),
 					valid = this.checkEmailByRegex(el);
 
 				if ( !emptyness ) {
-					formControl.errorControl.showError(el, "empty");
-					this.setState(el, false);
+					this.setError(el, "empty");
 					return;
 				} else if ( !valid ) {
-					formControl.errorControl.showError(el, "mail-error");
-					this.setState(el, false);
+					this.setError(el, "mail-regex");
 					return;
 				}
 
-				formControl.validControl.showValid(el);
-				this.setState(el, true);
+				this.setValid(el);
 			},
 			confirmEmail: function(el, email) {
 				var emptyness = this.checkEmpty(el),
 					confirm  = this.matchFields(email, el);
 
 				if ( !this.checkEmpty(email) ) {
-					formControl.errorControl.showError(el, "mail-empty");
-					this.setState(el, false);
+					this.setError(el, "mail-empty");
 					return;
 				}
 
 				if ( formControl.validation.states.email === false ) {
-					formControl.errorControl.showError(el, "mail-incorrect");
-					this.setState(el, false);
+					this.setError(el, "mail-incorrect");
 					return;
 				}
 
 				if ( !emptyness ) {
-					formControl.errorControl.showError(el, "empty");
-					this.setState(el, false);
+					this.setError(el, "empty");
 					return;
 				} else if ( !confirm ) {
-					formControl.errorControl.showError(el, "emails-not-match");
-					this.setState(el, false);
+					this.setError(el, "emails-not-match");
 					return;
 				}
 
-				formControl.validControl.showValid(el);
-				this.setState(el, true);
+				this.setValid(el);
+			},
+			validateSkype: function(el) {
+				if ( el.value !== "" ) {
+					this.startSkypeValidation(el);
+				} else {
+					formControl.errorControl.removeErOrValid(el);
+				}
+			},
+			startSkypeValidation: function(el) {
+				var emptyness = this.checkEmpty(el),
+					len = this.checkLength(el),
+					valid = this.checkTextByRegex(el);
+
+				if ( !emptyness ) {
+					this.setError(el, "empty");
+					return;
+				}
+
+				if ( !len ) {
+					this.setError(el, "skype-short");
+					return;
+				}
+
+				if ( !valid ) {
+					this.setError(el, "skype-regex");
+					return;
+				}
+
+				this.setValid(el);
+			},
+			validateMessage: function( el ) {
+				var emptyness = this.checkEmpty(el);
+
+				if ( !emptyness ) {
+					this.setError(el, "empty");
+					return;
+				}
+
+				this.setValid(el);
 			},
 			matchFields: function(el1, el2) {
 				return ( el1.value === el2.value ) ? true : false;
@@ -150,19 +215,42 @@
 					return true;
 				}
 			},
+			checkTextByRegex: function(el) {
+				return this.ruleRegx.textRule.test(el.value);
+			},
+			checkCompanyByRegex: function(el) {
+				return this.ruleRegx.companyRule.test(el.value);
+			},
 			setState: function(el, state) {
 				var id = el.id;
 				this.states[id] = state;
+			},
+			checkLength: function(el) {
+				return ( el.value.length >= 3 ) ? true : false;
+			},
+			setError: function(el, error) {
+				formControl.errorControl.showError(el, error);
+				this.setState(el, false);
+			},
+			setValid: function(el) {
+				formControl.validControl.showValid(el);
+				this.setState(el, true);
 			}
 
 		},
 		errorControl: {
 			errors: {
 				empty: "This field have to be filled",
-				"mail-error": "Email is written incorrectly",
+				"name-short": "Name is too short. At least 3 symbols",
+				"name-regex": "Name isn't valid (a-zA-Z0-9_-)",
+				"company-short": "Company name is too short. At least 3 symbols",
+				"company-regex": "Company name isn't valid (a-zA-Z0-9_- and space)",
+				"mail-regex": "Email is written incorrectly (@ and .domain)",
 				"mail-empty": "Previous email filed is empty",
 				"mail-incorrect": "Previous email is incorrectly written",
-				"emails-not-match": "Emails aren't match to each other"
+				"emails-not-match": "Emails aren't match to each other",
+				"skype-regex": "Skype-nickname isn't valid. (a-zA-Z0-9_-)",
+				"skype-short": "Skype-nikename is too short. At least 3 symbols"
 			},
 			showError: function(el, type) {
 				var st = this.isErAlreadyExist(el,type),
@@ -274,12 +362,10 @@
 				this.submitValidation.isValid(e);
 			},
 			valName: function(el) {
-				formControl.validation.validateText(el);
+				formControl.validation.validateName(el);
 			},
 			valCompany: function(el) {
-				if ( el.value !== "" ) {
-					formControl.validation.validateText(el);
-				}
+				formControl.validation.validateCompany(el);
 			},
 			valEmail: function(el) {
 				formControl.validation.validateEmail(el);
@@ -288,12 +374,10 @@
 				formControl.validation.confirmEmail(el1, el2);
 			},
 			valSkype: function(el) {
-				if ( el.value !== "" ) {
-					formControl.validation.validateText(el);
-				}
+				formControl.validation.validateSkype(el);
 			},
 			valMsg: function(el) {
-				formControl.validation.validateText(el);
+				formControl.validation.validateMessage(el);
 			},
 			isValid: function(e) {
 				var obj = formControl.validation.states,
