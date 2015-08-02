@@ -11,8 +11,6 @@ var gulp = require("gulp"),
 	svgstore = require("gulp-svgstore"),
 	inject = require("gulp-inject"),
 	cheerio = require("gulp-cheerio"),
-	Icons = require("gulp-svg-icons"),
-	svgmin = require("gulp-svgmin"),
 	htmlreplace = require("gulp-html-replace"),
 	htmlmin = require("gulp-htmlmin");
 
@@ -28,8 +26,6 @@ var paths = {
 	copressed: "app/assets/compressed/",
 	svg: "app/resourses/svg/"
 }
-
-var icons = new Icons(paths.svg);
 
 
 // Server
@@ -110,7 +106,10 @@ gulp.task("spriteSvg", function(){
 	var svgs = gulp
 		.src(paths.svg + "*.svg")
 		.pipe(rename({prefix: "icon-"}))
-		.pipe(svgmin())
+		.pipe(imagemin({
+			progressive: true,
+			svgoPlugins: [{removeViewBox: false}]
+		}))
 		.pipe(svgstore({inlineSvg: true}))
 		.pipe(cheerio({
 			run: function($) {
@@ -125,14 +124,6 @@ gulp.task("spriteSvg", function(){
 
 	gulp.src(paths.app + "index.html")
 	.pipe(inject(svgs, {transform: fileContents}))
-	.pipe(gulp.dest(paths.app));
-});
-
-// Replace svg-snippets
-
-gulp.task('replaceSvg', function() {
-	gulp.src(paths.app + "index.html")
-	.pipe(icons.replace())
 	.pipe(gulp.dest(paths.app));
 });
 
@@ -168,7 +159,7 @@ gulp.task("build", ["copyhtml", "copy"]);
 
 gulp.task("watch", function(){
 	gulp.watch(paths.stylus + "*.styl", ["css", "reload"]);
-	gulp.watch(paths.app + "index.html", ["replaceSvg","html"]);
+	gulp.watch(paths.app + "index.html", ["html"]);
 	gulp.watch(paths.js + "*.js", ["js", ["lint"]]);
 	gulp.watch(paths.images + "**/*", ["compress"]);
 	gulp.watch(paths.svg + "*.svg", ["spriteSvg"]);
@@ -177,4 +168,3 @@ gulp.task("watch", function(){
 // Default task
 
 gulp.task("default", ["connect", "css", "js", "spriteSvg", "watch"]);
-
